@@ -35,10 +35,10 @@ class CrossRoads_Memcache extends Memcache
 			throw new CrossRoads_Error("Please check config.php for correct memcache settings!",'MEMCONFIG');
 		}
 		//parent::__construct();
-		$servers=explode(",",MEMCACHED_SERVERS);
+		$servers = explode(",", MEMCACHED_SERVERS);
         foreach ($servers as $server) {
-        list($server,$port)=preg_split("/:/",$server);
-            if(!($this->addServer($server,$port))) {
+			list($server, $port) = explode(":", $server);
+            if(!($this->addServer($server, $port))) {
                 CrossRoads_Log::alert("Could not connect to MemCache server $server:$port");
             }
         }
@@ -46,7 +46,7 @@ class CrossRoads_Memcache extends Memcache
 
 	public function detonate($array) {
 		foreach($array as $key) {
-			if(!$this->delete(CACHE_PREFIX.$key)) CrossRoads_Log::alert("Unable to clear cache for: ".CACHE_PREFIX.$key);
+			if(!$this->delete(CACHE_PREFIX.$key)) { CrossRoads_Log::alert("Unable to clear cache for: ".CACHE_PREFIX.$key); }
 		}
 	}
 }

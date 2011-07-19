@@ -30,10 +30,10 @@
 
 class CrossRoads_Crypto
 {
-	protected $salt, $data, $iv, $mode, $method,$key;
+	private $salt, $data, $iv, $mode, $method, $key;
 
 	// Class constructor
-	function __construct($data=NULL, $salt=NULL, $method=NULL, $iv=NULL, $mode=NULL,$key=NULL) {
+	function __construct($data=false, $salt=false, $method=false, $iv=false, $mode=false, $key=false) {
 		$this->setData($data);
 		$this->setSalt($salt);
 		$this->setIv($iv);
@@ -41,69 +41,62 @@ class CrossRoads_Crypto
 		$this->setMethod($method);
 		$this->setKey($key);
 	}
-	//Destructor
-	function __destruct() {
-		//cleanup the memory a little bit
-		unset($this->salt);
-		unset($this->data);
-		unset($this->iv);
-		unset($this->mode);
-		unset($this->method);
-		unset($this->key);
-	}
 
 	function __toString() { return $this->data; }
 	public function getIvSize() { return mcrypt_get_iv_size(constant($this->method), constant($this->mode)); }
-	public function setIv($iv=NULL) { $this->iv=$iv; }
+	public function setIv($iv=false) { $this->iv=$iv; }
 	public function getIv() { return $this->iv; }
 	public function getData() { return $this->data; }
-	public function setSalt($salt=NULL) { $this->salt=$salt; }
-	public function setData($data=NULL) { $this->data=$data; }
-	public function setKey($key=NULL) { $this->key=$key; }
+	public function setSalt($salt=false) { $this->salt=$salt; }
+	public function setData($data=false) { $this->data=$data; }
+	public function setKey($key=false) { $this->key=$key; }
 
 	/*This will set the method to a supported method by the mcrypt or hash
 	* library, agnostic to which one you "plan" on using
 	* Please try to use RIJNDAEL_256 as the encryption method (AES256)
 	*/
-	function setMethod($method=NULL) {
+	function setMethod($method=false) {
+		if(!$method) { throw new CrossRoads_Error("An empty method could not be set","CRYPTOMETH"); }
 		$method=strtoupper($method);
-		$this->method=NULL;
 		//check if this is a hash method
 		foreach(hash_algos() as $algo) {
 			if($method === strtoupper($algo)) {
 				$this->method=$method;
-				return;
+				return true;
 			}
 		}
 		//if not then check if it's a crypto method
 		foreach(mcrypt_list_algorithms() as $supportedMethod) {
 			$supportedMethod = strtoupper(str_replace("-","_",$supportedMethod)); //unfortunately the naming conventions seem to be, juuust a little bit different
-			if($method===$supportedMethod) {
+			if($method === $supportedMethod) {
 				$this->method="MCRYPT_".$method;
-				return;
+				return true;
 			}
 		}
-		if(!$this->method) { throw new CrossRoads_Error("The cryptographic method \"$method\" is not supported by the system","CRYPTOMETH"); }
+		throw new CrossRoads_Error("The cryptographic method \"{$method}\" is not supported by the system","CRYPTOMETH");
 	}
 
 	//Set the crypto mode, this is used for en/decryption, generally you'd want to use the ECB mode
-	function setMode($mode=NULL) {
+	function setMode($mode=false) {
+		if(!$mode) { throw new CrossRoads_Error("An empty crypto mode could not be set","CRYPTOMODE"); }
 		$mode = strtoupper($mode);
-		$this->mode=NULL;
 		foreach(mcrypt_list_modes() as $supportedMode) {
-			if($mode==strtoupper($supportedMode)) { $this->mode="MCRYPT_MODE_".$mode; return; }
+			if($mode === strtoupper($supportedMode)) { 
+				$this->mode="MCRYPT_MODE_".$mode; 
+				return true; 
+			}
 		}
-		if(!$this->mode) { throw new CrossRoads_Error("The cryptographic mode \"$mode\" is not supported by the system","CRYPTOMODE"); }
+		throw new CrossRoads_Error("The cryptographic mode \"{$mode}\" is not supported by the system","CRYPTOMODE");
 	}
 	
 	function hash() {
 		if(!$this->data) { throw new CrossRoads_Error('Hashing requires data to hash','CRYPTOHASH'); }
 		if(!$this->method || !preg_match('/^(MHASH)?/',$this->method)) { throw new CrossRoads_Error('Hashing requires a hashing algorithm to hash','HASHALGO'); }
 		$this->data = (!$this->salt) ? hash($this->method, $this->data) : hash($this->method, $this->data.$this->salt);
-		return;
+		return true;
 	}
 	
-	function encrypt($key=NULL) {	
+	function encrypt($key=false) {	
 		if($key) { $this->setKey($key); }
 		if(!$this->data) { throw new CrossRoads_Error('Encryption requires data','ENCDATA'); }
 		if(!$this->key) { throw new CrossRoads_Error('Encryption requires a key','ENCKEY'); }
@@ -112,10 +105,10 @@ class CrossRoads_Crypto
 		//generate iv (note it is absolutely necessary to store the iv, valid iv is required at decryption time)
 		$this->iv = mcrypt_create_iv($this->getIvSize(), MCRYPT_DEV_URANDOM);
 		//Encrypt
-		return mcrypt_encrypt(constant($this->method), $this->key, $this->data, constant($this->mode), $this->iv);
+		return mcrypt_encrypt(constant($this->method), $this->key, trim($this->data), constant($this->mode), $this->iv);
 	}
 
-	function decrypt($key=NULL) {
+	function decrypt($key=false) {
 		if($key) { $this->setKey($key); }
 		if(!$this->data) { throw new CrossRoads_Error('Decrypt requires data.','DECDATA'); }
 		if(!$this->key) { throw new CrossRoads_Error('Decryption requires a key','DECKEY'); }

@@ -31,20 +31,21 @@
 
 class CrossRoads_JsonClient
 {
-    protected $username,$password_hash,$creation,$timeout;
+    private $username, $password_hash, $creation, $timeout;
 
-    function __construct($key,$secret,$location,$timeout=FALSE) {
+    function __construct($key, $secret, $location, $timeout=FALSE) {
         $this->location=$location;
         $this->key=$key;
         $this->secret=$secret;
         $this->creation=time();
     }
 
-    public function __call($name,$args) {
+    public function __call($name, $args) {
          echo json_encode(array_merge(array('auth'=>array('key'=>$this->key,'nonce'=>$this->nonce(),'creation'=>$this->creation)),array($name=>$args)));
          return $this->doRequest(json_encode(array_merge(array('auth'=>array('key'=>$this->key,'nonce'=>$this->nonce(),'creation'=>$this->creation)),array($name=>$args))));
     }
-    protected function doRequest($request)
+    
+    private function doRequest($request)
     {
             $curl = curl_init($this->location);
             curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
@@ -57,14 +58,12 @@ class CrossRoads_JsonClient
             curl_setopt($curl, CURLOPT_HTTPHEADER, array("Content-Type: application/json"));
             curl_setopt($curl, CURLOPT_TIMEOUT, $this->timeout);
             $response = curl_exec($curl);
-            if(curl_errno($curl)) {
-                throw new Exception(curl_error($curl));
-            }
+            if(curl_errno($curl)) { throw new Exception(curl_error($curl)); }
             curl_close($curl);
 			return $response;
     }
 
-    protected function nonce() {
+    private function nonce() {
         return sha1($this->creation.$this->key.$this->secret);
     }
 }

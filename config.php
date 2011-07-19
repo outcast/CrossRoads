@@ -31,21 +31,20 @@ defined('CLASSES') || define('CLASSES', ROOT.DS.'classes'.DS);           // core
 
 /* Domains */
 defined('SERVICE') || define('SERVICE', $_SERVER['SERVER_NAME']);        // apache needs to be configured properly to use cannonical names for this to work
-defined('SERVICE_DIR') || define('SERVICE_DIR', 'services');
+defined('SERVICE_DIR') || define('SERVICE_DIR', 'services');			 // service directory (in case for some crazy reason someone may want to change it)
 
 defined('WEB_ROOT') || define('WEB_ROOT', SERVICE_DIR.DS.SERVICE.DS);
 defined('SERVICE_CLASSES') || define('SERVICE_CLASSES', WEB_ROOT.'classes'.DS);
 defined('CONFIG') || define('CONFIG', WEB_ROOT.'config'.DS);             // domain config directory location
 defined('MODULES_DIR') || define('MODULES_DIR', WEB_ROOT.'modules'.DS);  // domain module directory
 
-defined('LOG') or define('LOG', ROOT.DS.'logs'.DS.SERVICE.'.log');
+defined('LOG') or define('LOG', ROOT.DS.'logs'.DS.SERVICE.'.log');		 // logging structure
 
 /* CrossRoads Services*/
-define('CROSSROADS_SOAP'    , true);
-define('CROSSROADS_JSON'    , true);
+define('CROSSROADS_SOAP', true);
+define('CROSSROADS_JSON', true);
 
-
-
+/*------- Don't edit below unless you really know what you are doing -------*/
 if(isset($_SERVER['HTTP_X_FORWARDED_FOR'])) { define('IP',$_SERVER['HTTP_X_FORWARDED_FOR']); } // we prefer XFF actually, but if its not available, we'll take anything we can get
 else if(isset($_SERVER['REMOTE_ADDR'])) { define('IP',$_SERVER['REMOTE_ADDR']); } 
 else if(isset($_SERVER['HTTP_CLIENT_IP'])) { define('IP',$_SERVER['HTTP_CLIENT_IP']); }

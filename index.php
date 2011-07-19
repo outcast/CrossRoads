@@ -33,10 +33,9 @@ if($_GET) {
     defined('MOD_CLASS')|| define('MOD_CLASS', mb_convert_case(MOD_NAME, MB_CASE_TITLE));
     defined('TARGET_NAMESPACE') || define('TARGET_NAMESPACE', ucwords(SERVICE).'-'.MOD_CLASS);
     
-    if(@!include_once(MODULES_DIR.MOD_NAME.DS.MOD_NAME.".php"));
-    else {
+    if(@include_once(MODULES_DIR.MOD_NAME.DS.MOD_NAME.".php")) {
         $module = new MOD_CLASS();
-        try
+        try 
         {
             $ref = CrossRoads_Reflection::reflect(MOD_NAME.'::'.MOD_ACTION);
         }
@@ -47,21 +46,21 @@ if($_GET) {
             if(!$ref->isProtected()) {
                  CrossRoads_Log::info('Accessed method: '.MOD_NAME.'::'.MOD_ACTION);
                  $module->$modAction($modData);
-            }
-            else CrossRoads_Log::warn('Attempted to access Protected method: '.MOD_NAME.'::'.MOD_ACTION);
-        }
-        else CrossRoads_Log::alert('Attempted to access Private method: '.MOD_NAME.'::'.MOD_ACTION);
+            } else { 
+				CrossRoads_Log::warn('Attempted to access Protected method: '.MOD_NAME.'::'.MOD_ACTION);
+			}
+        } else {
+			CrossRoads_Log::alert('Attempted to access Private method: '.MOD_NAME.'::'.MOD_ACTION);
+		}
     }
-}
-else { include_once(WEB_ROOT."index.php"); } //serve something
+} else { include_once(WEB_ROOT."index.php"); } //serve something
 
 
 /******* GLOBAL FUNCTIONS *********/
 /* class autoloader */
 function __autoload($class) {
     $class = (preg_match("|(.*)::.*|", $class, $matches)) ? strtolower($matches[1]) : $class;
-    if(@!include_once(SERVICE_CLASSES.$class.".php")) {
-        if(@!include_once(MODULES_DIR.$class.DS.$class.".php")) {
+    if(@!include_once(SERVICE_CLASSES.$class.".php") && @!include_once(MODULES_DIR.$class.DS.$class.".php")) {
             require_once(CLASSES.$class.".php");
         }
     }
