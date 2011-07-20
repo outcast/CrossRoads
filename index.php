@@ -61,7 +61,7 @@ if($_GET) {
 function __autoload($class) {
     $class = (preg_match("|(.*)::.*|", $class, $matches)) ? strtolower($matches[1]) : $class;
     if(@!include_once(SERVICE_CLASSES.$class.".php") && @!include_once(MODULES_DIR.$class.DS.$class.".php")) {
-            require_once(CLASSES.$class.".php");
-        }
-    }
+		require_once(CLASSES.$class.".php");
+	}
 }
+
