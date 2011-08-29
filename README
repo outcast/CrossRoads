@@ -2,8 +2,128 @@ This is a pre pre release, there is still some work to be done, examples, and a 
 
 Needed:
 
-A real README
-Setup instructions
 database setup file
-test service
-test module example
+hello world module example
+
+------------------------------------------------------------------------
+Instructions for Ubuntu
+
+Required:
+
+Apache2
+PHP5
+Mod SSL
+
+Optional:
+MySQL
+Memcached
+Imagination
+
+# root prompt, you can/should use sudo instead, # is shorter to write
+> user prompt (user who is part of www-data group)
+
+
+-------------------
+- FRAMEWORK SETUP -
+-------------------
+
+Step 1:
+go to your www home
+> cd /var/www
+
+Step 2:
+git clone the CrossRoads project
+> git clone git://github.com/atomicmaster/CrossRoads.git
+
+Step 3:
+edit /etc/apache2/httpd.conf
+# nano /etc/apache2/httpd.conf
+ServerName [name]
+UseCanonicalName On
+
+Step 4:
+enable mod ssl
+# enable ssl
+
+Step 5:
+enable mod rewrite
+# a2enmod reqrite
+
+Step 6:
+edit /etc/apache2/ports.conf to add a new port for the API:
+# nano /etc/apache2/ports.conf
+<IfModule mod_ssl.c>
+	NameVirtualHost *:9090
+     	Listen 9090
+</IfModule>
+
+Step 7:
+create a host for the API host (port 9090 in our example:
+# nano /etc/apache2/sites-available/CrossRoads
+edit /etc/apache2/sites-available/CrossRoads:
+<IfModule mod_ssl.c>
+<VirtualHost *:9090>
+	ServerAdmin webmaster@localhost
+
+	DocumentRoot /var/www/CrossRoads
+	<Directory />
+		Options -FollowSymLinks
+		AllowOverride None
+	</Directory>
+	
+	<Directory /var/www/CrossRoads/>
+		Options -Indexes FollowSymLinks MultiViews
+		AllowOverride All
+		Order allow,deny
+		allow from all
+	</Directory>
+
+	ErrorLog ${APACHE_LOG_DIR}/error.log
+
+	LogLevel warn
+
+	CustomLog ${APACHE_LOG_DIR}/ssl_access.log combined
+
+	SSLEngine on
+
+	SSLCertificateFile    /etc/ssl/certs/ssl-cert-snakeoil.pem
+	SSLCertificateKeyFile /etc/ssl/private/ssl-cert-snakeoil.key
+
+	<FilesMatch "\.(cgi|shtml|phtml|php)$">
+		SSLOptions +StdEnvVars
+	</FilesMatch>
+
+	BrowserMatch "MSIE [2-6]" \
+		nokeepalive ssl-unclean-shutdown \
+		downgrade-1.0 force-response-1.0
+	# MSIE 7 and newer should be able to use keepalive
+	BrowserMatch "MSIE [17-9]" ssl-unclean-shutdown
+
+</VirtualHost>
+</IfModule>
+
+Step 8:
+restart service to have all of this work:
+# service apache2 restart
+
+----------------------
+- SIMPLE HELLO WORLD -
+----------------------
+Step 1:
+Create a service with the host name. For this demo case, the hostname is Midgard, thus:
+> cd /var/www/CrossRoads/services
+> mkdir Midgard
+
+Step 2:
+Create an index.php and config.php files (index.php is not strictly required, more explanation later, for this purpose, let's just use it here)
+> touch config.php
+> nano index.php
+Hello World!
+
+Test:
+Go to https://localhost:9090/ 
+Result:
+Hello World! 
+
+Note:
+Good job, you have written the simplest version of a hello world under this framework, now let's create a not-so-simple version by showing you how modules and APIs work
