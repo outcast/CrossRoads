@@ -76,7 +76,7 @@
    */
     function info($str) {
         $str = self::trace().$str;
-        (COLOR) ? self::log('info', CrossRoads_Color::white($str)):$this->log('info',$str);
+        (COLOR) ? self::log('info', CrossRoads_Color::white($str)):self::log('info',$str);
     }
 
    /** notify: low level notification
@@ -87,7 +87,7 @@
    */
     function notify($str) {
         $str = self::trace().$str;
-        (COLOR) ? self::log('note', CrossRoads_Color::green($str)):$this->log('note',$str);
+        (COLOR) ? self::log('note', CrossRoads_Color::green($str)):self::log('note',$str);
     }
 
    /** warn: medium level notification
@@ -98,7 +98,7 @@
    */
     function warn($str) {
         $str = self::trace().$str;
-        (COLOR) ? self::log('warn',CrossRoads_Color::yellow($str)):$this->log('warn',$str);
+        (COLOR) ? self::log('warn',CrossRoads_Color::yellow($str)):self::log('warn',$str);
     }
 
    /** alert: high level notification
@@ -109,6 +109,6 @@
    */
     function alert($str) {
         $str = self::trace().$str;
-        (COLOR) ? self::log('alert',CrossRoads_Color::red($str)):$this->log('alert',$str);
+        (COLOR) ? self::log('alert',CrossRoads_Color::red($str)):self::log('alert',$str);
     }
  }

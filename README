@@ -127,3 +127,49 @@ Hello World!
 
 Note:
 Good job, you have written the simplest version of a hello world under this framework, now let's create a not-so-simple version by showing you how modules and APIs work
+
+-------------------------------------
+- SLIGHTLY MORE COMPLEX HELLO WORLD -
+-------------------------------------
+CrossRoads is a service/module-oriented framework, as such to write something that will actually utilize the framework
+
+Lets first create a modules directory in our service, i will also create a folder for our module called "hello":
+> mkdir -p modules/hello
+
+Now let's create the main module file. Please note that the main module file bears the name of the module and has a php extension:
+> nano hello.php
+
+<?php
+
+//notice again that the name of the main module class is the same as the name of the module
+class Hello extends CrossRoads_WebService 
+{
+
+	/** 
+	 * welcome
+	 * 
+	 * Welcomes people by name, as many times as you specify
+	 * 
+	 * @param string $name	name of whoever we are welcoming
+	 * @param int $times	number of times we are welcoming this person
+	 * @param bool $loop	whether or not we care about the times, by default let's welcome the name once
+	 *
+	 * @return string welcome string 
+	 */
+	public function welcome($name, $times=1, $loop=false) {
+		// let's take some simple precautions to clean up input
+		$name = preg_replace('/[^a-z]/', "", $name);
+		$loop = ($loop) ? true : false;
+		$times = ($times>0 && $loop) ? intval($times) : 1;
+		
+		// init a return variable
+		$welcome_string;
+		for($i=0; $i>=$times; ++$i) {
+			$welcome_string .= "Welcome {$name}\n";
+		}
+		
+		return $welcome_string;
+	}
+}
+
+
