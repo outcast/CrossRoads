@@ -33,8 +33,10 @@ if($_GET) {
     defined('MOD_CLASS')|| define('MOD_CLASS', mb_convert_case(MOD_NAME, MB_CASE_TITLE));
     defined('TARGET_NAMESPACE') || define('TARGET_NAMESPACE', ucwords(SERVICE).'-'.MOD_CLASS);
     
+    $modClass = MOD_CLASS;
+
     if(@include_once(MODULES_DIR.MOD_NAME.DS.MOD_NAME.".php")) {
-        $module = new MOD_CLASS();
+        $module = new $modClass();
         try 
         {
             $ref = CrossRoads_Reflection::reflect(MOD_NAME.'::'.MOD_ACTION);
@@ -60,7 +62,7 @@ if($_GET) {
 /* class autoloader */
 function __autoload($class) {
     $class = (preg_match("|(.*)::.*|", $class, $matches)) ? strtolower($matches[1]) : $class;
-    if(!include_once(SERVICE_CLASSES.$class.".php") && !include_once(MODULES_DIR.$class.DS.$class.".php")) {
+    if((@!include_once(SERVICE_CLASSES.$class.".php")) && (@!include_once(MODULES_DIR.$class.DS.$class.".php"))) {
 		require_once(CLASSES.$class.".php");
 	}
 }

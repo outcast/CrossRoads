@@ -17,16 +17,18 @@
  * @version  SVN: $Id$
  * @link     http://atomicmaster.com
  */
- 
+/* Prior to PHP 5.3, we should fix this */
+if ( !defined('__DIR__') ) define('__DIR__', dirname(__FILE__));
+
 /* Debugging */
-defined('DEBUG') || define('DEBUG', TRUE);                              // for debug backtrace in log messages
+defined('DEBUG') || define('DEBUG', true);                              // for debug backtrace in log messages
 defined('SAFE_LOG') || define ('SAFE_LOG', FALSE);                      // for shell-safe logging
 defined('COLOR') or define('COLOR', TRUE);                              // for pretty logging messages
 
 /* Core */
 defined('DS') || define('DS', '/');                                      // no need for DIRECTORY_SEPERATOR if you just use /
-defined('CORE') || define('CORE', dirname(__FILE__));                    // core location
-defined('ROOT') || define('ROOT', dirname(dirname(__FILE__)));           // framework location
+defined('CORE') || define('CORE', __DIR__);                    // core location
+defined('ROOT') || define('ROOT', dirname(CORE));           // framework location
 defined('CLASSES') || define('CLASSES', CORE.DS.'classes'.DS);           // core classes directory
 
 /* Domains */
@@ -52,5 +54,3 @@ else if(isset($_SERVER['HTTP_CLIENT_IP'])) { define('IP',$_SERVER['HTTP_CLIENT_I
 error_reporting(E_ALL ^ E_NOTICE); // override whatever the admin set to provide the proper amount of error reporting
 
 define('JAVA_DISABLE_AUTOLOAD',TRUE); // disable javabridge autoloader we don't want it, we don't need it... Web is not the place for Java...
-
-require_once(CLASSES.'CrossRoads_Color.php');
