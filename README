@@ -1,9 +1,9 @@
-This is a pre pre release, there is still some work to be done, examples, and a tutorial of how to set up and use this framework... also i think an sql file is missing for the necessary database. Give me a week or two to start coming up with these things...
+First at least mostly working release with a good chunk of documentation
 
 Needed:
 
 database setup file
-hello world module example
+hello world module example (client part)
 
 ------------------------------------------------------------------------
 Instructions for Ubuntu
