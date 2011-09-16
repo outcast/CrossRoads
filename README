@@ -172,4 +172,63 @@ class Hello extends CrossRoads_WebService
 	}
 }
 
+So to test this, lets save it, dial into our server, like this: https://127.0.0.1:9090/hello/wsdl
+the results should be an xml file:
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="http://schemas.xmlsoap.org/wsdl/" name="Hello" targetNamespace="Midgard-Hello" xmlns:tns="Midgard-Hello" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+  <message name="welcomeRequest">
+    <part name="name" type="xsd:string"/>
+    <part name="times" type="xsd:int"/>
+    <part name="loop" type="xsd:bool"/>
+  </message>
+  <message name="welcomeResponse">
+    <part name="result" type="xsd:string"/>
+  </message>
 
+  <portType name="HelloPortType">
+    <operation name="welcome">
+      <input message="tns:welcomeRequest"/>
+      <output message="tns:welcomeResponse"/>
+    </operation>
+  </portType>
+  <binding name="HelloBinding" type="tns:HelloPortType">
+    <soap:binding style="rpc" transport="http://schemas.xmlsoap.org/soap/http"/>
+    <operation name="welcome">
+
+      <documentation> 	  welcome	  	  Welcomes people by name, as many times as you specify	  	 	 </documentation>
+      <soap:operation soapAction="urn:midgard-hello#welcome"/>
+      <input>
+        <soap:body use="encoded" namespace="urn:midgard-hello" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </input>
+      <output>
+        <soap:body use="encoded" namespace="urn:midgard-hello" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </output>
+
+    </operation>
+  </binding>
+  <service name="HelloService">
+    <port name="HelloPort" binding="HelloBinding">
+      <soap:address location="https://127.0.0.1:9090/hello/soap"/>
+    </port>
+  </service>
+</definitions>
+
+Parts to note here:
+    <operation name="welcome">
+      <input message="tns:welcomeRequest"/>
+      <output message="tns:welcomeResponse"/>
+    </operation>
+    
+You can see that our function actually translated into wsdl, this gives you the name and points you to input and output, when you follow those, you will see:
+  <message name="welcomeRequest">
+    <part name="name" type="xsd:string"/>
+    <part name="times" type="xsd:int"/>
+    <part name="loop" type="xsd:bool"/>
+  </message>
+  <message name="welcomeResponse">
+    <part name="result" type="xsd:string"/>
+  </message>
+
+This is everything we have defined in the comments above the function, and it is integral to this operation and within self-documentation.
+
+This is a more advanced hello world, now let's see how we can actually use that function, and build a client.
