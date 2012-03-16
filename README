@@ -43,11 +43,11 @@ UseCanonicalName On
 
 Step 4:
 enable mod ssl
-# enable ssl
+# a2enmod ssl
 
 Step 5:
 enable mod rewrite
-# a2enmod reqrite
+# a2enmod rewrite
 
 Step 6:
 edit /etc/apache2/ports.conf to add a new port for the API:
